@@ -24,11 +24,11 @@ def get_db():
     finally:
         db.close()
 
-db.dependency = Annotated[Session, Depends(get_db)]
+DbDependency = Annotated[Session, Depends(get_db)]
 
 
 @app.post("/questions/")
-async def create_question(question: QuestionBase, db: db.dependency):
+async def create_question(question: QuestionBase, db: DbDependency):
     db_question = module.Question(question_text=question.question_text)
     db.add(db_question)
     db.commit()

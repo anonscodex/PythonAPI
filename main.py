@@ -38,3 +38,24 @@ async def create_question(question: QuestionBase, db: DbDependency):
         db.add(db_choice)
     db.commit()
         
+
+@app.get("/questions/{question_id}")
+async def read_question(question_id: int, db: DbDependency):
+    result = db.query(module.Question).filter(module.Question.id == question_id).first()
+    if not result:
+        raise HTTPException(status_code =404, detail="Question not found")
+    return result
+
+@app.get("/questions")
+async def get_all_question( db:DbDependency):
+    result = db.query(module.Question).all()
+    if not result:
+        raise HTTPException(status_code=404, detail="Question not found")
+    return result
+
+@app.get("/answer/{question_id}")
+async def get_answer(question_id: int, db: DbDependency):
+    result = db.query(module.Choices).filter(module.Choices.question_id == question_id, module.Choices.is_correct == True).first()
+    if not result:
+        raise HTTPException(status_code=404, detail="Answer not found")
+    return result
